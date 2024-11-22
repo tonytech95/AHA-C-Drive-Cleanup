@@ -73,3 +73,4 @@ $RECYCLE.BIN/
 
 # ScriptCS
 scriptcs_bin/
+.fake
