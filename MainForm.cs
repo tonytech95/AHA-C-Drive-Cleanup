@@ -4,13 +4,14 @@ using System.IO;
 using System.Windows.Forms;
 using System.Timers;
 
-namespace CheckAndClean
+namespace C_Drive_Cleanup
 {
     public class MainForm : Form
     {
         private int postponeCount = 0;
         private const int maxPostpone = 3;
-        private readonly string postponeFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "PostponeCount.txt");
+        private readonly string postponeFolderPath;
+        private readonly string postponeFilePath;
         private Label countdownLabel = new(); // Initialize directly
         private Label messageLabel = new(); // Initialize directly
         private System.Timers.Timer countdownTimer = new(1000); // Initialize directly
@@ -21,6 +22,9 @@ namespace CheckAndClean
         public MainForm()
         {
             InitializeComponent();
+            // Initialize the paths in the constructor
+            postponeFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "C_Drive_Cleanup");
+            postponeFilePath = Path.Combine(postponeFolderPath, "PostponeCount.txt");
             postponeCount = GetPostponeCount();
             CleanUpTempTask(); // Clean up the temporary task if it exists
             UpdateCountdown();
@@ -29,33 +33,33 @@ namespace CheckAndClean
 
         private void InitializeComponent()
         {
-            this.Text = "C Drive Clean Up";
-            this.Width = 300;
-            this.Height = 200;
-            this.StartPosition = FormStartPosition.Manual;
-            this.TopMost = true; // Make the window topmost
+            Text = "C Drive Clean Up";
+            Width = 300;
+            Height = 200;
+            StartPosition = FormStartPosition.Manual;
+            TopMost = true; // Make the window topmost
 
             // Set the window position to 45 pixels off from the bottom
             var primaryScreen = Screen.PrimaryScreen;
             if (primaryScreen != null)
             {
-                this.Left = primaryScreen.WorkingArea.Width - this.Width - 10;
-                this.Top = primaryScreen.WorkingArea.Height - this.Height - 30;
+                Left = primaryScreen.WorkingArea.Width - Width - 10;
+                Top = primaryScreen.WorkingArea.Height - Height - 30;
             }
 
             messageLabel.Width = 280;
             messageLabel.Height = 80;
             messageLabel.Top = 20;
             messageLabel.Left = 10;
-            messageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.Controls.Add(messageLabel);
+            messageLabel.TextAlign = ContentAlignment.MiddleCenter;
+            Controls.Add(messageLabel);
 
             countdownLabel.Width = 280;
             countdownLabel.Height = 20;
             countdownLabel.Top = 100;
             countdownLabel.Left = 10;
-            countdownLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.Controls.Add(countdownLabel);
+            countdownLabel.TextAlign = ContentAlignment.MiddleCenter;
+            Controls.Add(countdownLabel);
 
             Button postponeButton = new()
             {
@@ -64,7 +68,7 @@ namespace CheckAndClean
                 Left = 50
             };
             postponeButton.Click += new EventHandler(PostponeButton_Click);
-            this.Controls.Add(postponeButton);
+            Controls.Add(postponeButton);
 
             Button okButton = new()
             {
@@ -73,13 +77,13 @@ namespace CheckAndClean
                 Left = 150
             };
             okButton.Click += new EventHandler(OkButton_Click);
-            this.Controls.Add(okButton);
+            Controls.Add(okButton);
 
             countdownTimer.Elapsed += OnTimedEvent;
             countdownTimer.AutoReset = true;
             countdownTimer.Enabled = true;
 
-            this.FormClosing += new FormClosingEventHandler(MainForm_FormClosing); // Handle form closing event
+            FormClosing += new FormClosingEventHandler(MainForm_FormClosing); // Handle form closing event
         }
 
         private void PostponeButton_Click(object? sender, EventArgs e)
@@ -111,7 +115,7 @@ namespace CheckAndClean
                 }
 
                 isPostponed = true; // Set the flag to indicate the window is being closed due to a postpone action
-                this.Close();
+                Close();
             }
             else
             {
@@ -125,7 +129,7 @@ namespace CheckAndClean
             PerformCleanup();
 
             isConfirmed = true; // Set the flag to indicate the window is being closed due to an OK action
-            this.Close();
+            Close();
         }
 
         private void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
@@ -154,50 +158,50 @@ namespace CheckAndClean
             }
         }
 
-/* Unused function. Used to be for check for date when running daily
-        private bool ShouldRunCleanup()
-        {
-            return IsFirstSpecifiedDay(DayOfWeek.Monday) || IsOnDemand();
-        }
+        /* Unused function. Used to be for check for date when running daily
+                private bool ShouldRunCleanup()
+                {
+                    return IsFirstSpecifiedDay(DayOfWeek.Monday) || IsOnDemand();
+                }
 
-        private bool IsFirstSpecifiedDay(DayOfWeek dayOfWeek)
-        {
-            DateTime today = DateTime.Today;
-            DateTime firstSpecifiedDay = new(today.Year, today.Month, 1);
+                private bool IsFirstSpecifiedDay(DayOfWeek dayOfWeek)
+                {
+                    DateTime today = DateTime.Today;
+                    DateTime firstSpecifiedDay = new(today.Year, today.Month, 1);
 
-            while (firstSpecifiedDay.DayOfWeek != dayOfWeek)
-            {
-                firstSpecifiedDay = firstSpecifiedDay.AddDays(1);
-            }
+                    while (firstSpecifiedDay.DayOfWeek != dayOfWeek)
+                    {
+                        firstSpecifiedDay = firstSpecifiedDay.AddDays(1);
+                    }
 
-            return today == firstSpecifiedDay;
-        }
+                    return today == firstSpecifiedDay;
+                }
 
 
-        private bool IsOnDemand()
-        {
-            string taskName = $"{Environment.UserName}_CleanUpTask";
-            try
-            {
-                Process process = new();
-                process.StartInfo.FileName = "schtasks";
-                process.StartInfo.Arguments = $"/Query /TN \"{taskName}\"";
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-                process.Start();
+                private bool IsOnDemand()
+                {
+                    string taskName = $"{Environment.UserName}_CleanUpTask";
+                    try
+                    {
+                        Process process = new();
+                        process.StartInfo.FileName = "schtasks";
+                        process.StartInfo.Arguments = $"/Query /TN \"{taskName}\"";
+                        process.StartInfo.RedirectStandardOutput = true;
+                        process.StartInfo.UseShellExecute = false;
+                        process.StartInfo.CreateNoWindow = true;
+                        process.Start();
 
-                string output = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
+                        string output = process.StandardOutput.ReadToEnd();
+                        process.WaitForExit();
 
-                return output.Contains("Ready") || output.Contains("Running");
-            }
-            catch
-            {
-                Console.WriteLine("Error querying scheduled task.");
-            }
-            return false;
-        } */
+                        return output.Contains("Ready") || output.Contains("Running");
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Error querying scheduled task.");
+                    }
+                    return false;
+                } */
 
         private int GetPostponeCount()
         {
@@ -210,8 +214,26 @@ namespace CheckAndClean
 
         private void SetPostponeCount(int count)
         {
-            File.WriteAllText(postponeFilePath, count.ToString());
-            File.SetAttributes(postponeFilePath, File.GetAttributes(postponeFilePath) | FileAttributes.Hidden);
+            try
+            {
+                // Ensure the folder exists
+                if (!Directory.Exists(postponeFolderPath))
+                {
+                    Directory.CreateDirectory(postponeFolderPath);
+                }
+
+                // Write to the file and set it as hidden
+                File.WriteAllText(postponeFilePath, count.ToString());
+                // File.SetAttributes(postponeFilePath, File.GetAttributes(postponeFilePath) | FileAttributes.Hidden);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show($"Access to the path '{postponeFilePath}' is denied. Please check your permissions.\n\n{ex.Message}", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void PerformCleanup()
@@ -282,7 +304,7 @@ namespace CheckAndClean
                 PerformCleanup();
 
                 isConfirmed = true; // Set the flag to indicate the window is being closed due to an OK action
-                this.Close();
+                Close();
             }
         }
 

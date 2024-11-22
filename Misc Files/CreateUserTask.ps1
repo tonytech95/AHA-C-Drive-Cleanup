@@ -1,10 +1,13 @@
 # Variables for the task name, day, and time
+param (
+    [string]$WeekDay = "Monday", # Default to Monday
+    [string]$WeekofMonth = "1"   # Default to first week
+)
+
 $UserName = $env:USERNAME
 $DomainName = $env:USERDOMAIN
 $TaskName = "${UserName}_CleanUpTask"
 $ExecutablePath = "C:\ProgramData\C Drive Cleanup\AHA C Drive Cleanup.exe" # Path to the executable
-$WeekDay = "Monday" #TODO Monday
-$WeekofMonth = "1" # TODO first week
 
 # Check if the task already exists
 $taskExists = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue

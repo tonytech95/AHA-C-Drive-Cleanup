@@ -35,7 +35,7 @@
    - In the **Script Name** field, enter the path to the PowerShell script (e.g., `\\NetworkDrive\Path\createusertask.ps1`).
 
 3. **Configure the Script Parameters** (if needed):
-   - If your script requires parameters, enter them in the **Script Parameters** field.
+   - The script defaults to First Monday of month. If need to modify, enter `-WeekDay "Monday" -WekkofMonth "1"` (which translate to First Monday) in the **Script Parameters** field.
 
 ### Step 4: Apply and Test the GPO
 

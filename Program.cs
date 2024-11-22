@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace CheckAndClean
+namespace C_Drive_Cleanup
 {
     static class Program
     {
