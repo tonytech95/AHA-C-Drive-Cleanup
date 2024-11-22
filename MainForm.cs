@@ -154,6 +154,7 @@ namespace CheckAndClean
             }
         }
 
+/* Unused function. Used to be for check for date when running daily
         private bool ShouldRunCleanup()
         {
             return IsFirstSpecifiedDay(DayOfWeek.Monday) || IsOnDemand();
@@ -171,6 +172,7 @@ namespace CheckAndClean
 
             return today == firstSpecifiedDay;
         }
+
 
         private bool IsOnDemand()
         {
@@ -195,7 +197,7 @@ namespace CheckAndClean
                 Console.WriteLine("Error querying scheduled task.");
             }
             return false;
-        }
+        } */
 
         private int GetPostponeCount()
         {
@@ -254,7 +256,7 @@ namespace CheckAndClean
 
         private void UpdateCountdown()
         {
-            //TODO Change to correct time
+            //TODO Change to correct time addminutes
             targetTime = DateTime.Now.AddSeconds(10); // Set the countdown target time to 10 minutes from now
             countdownTimer.Start();
         }

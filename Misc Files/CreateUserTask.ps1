@@ -3,8 +3,8 @@ $UserName = $env:USERNAME
 $DomainName = $env:USERDOMAIN
 $TaskName = "${UserName}_CleanUpTask"
 $ExecutablePath = "C:\ProgramData\C Drive Cleanup\AHA C Drive Cleanup.exe" # Path to the executable
-$WeekDay = "Monday"
-$WeekofMonth = "1" # first week
+$WeekDay = "Monday" #TODO Monday
+$WeekofMonth = "1" # TODO first week
 
 # Check if the task already exists
 $taskExists = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
