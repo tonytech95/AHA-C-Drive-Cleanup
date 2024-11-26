@@ -1,13 +1,18 @@
-using System;
+// using System;
 using System.Diagnostics;
-using System.IO;
-using System.Windows.Forms;
+// using System.IO;
+// using System.Windows.Forms;
 using System.Timers;
+using System.Runtime.InteropServices;
 
 namespace C_Drive_Cleanup
 {
     public class MainForm : Form
     {
+
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+
         private int postponeCount = 0;
         private const int maxPostpone = 3;
         private readonly string postponeFolderPath;
@@ -84,6 +89,19 @@ namespace C_Drive_Cleanup
             countdownTimer.Enabled = true;
 
             FormClosing += new FormClosingEventHandler(MainForm_FormClosing); // Handle form closing event
+
+            Load += new EventHandler(MainForm_Load);
+        }
+
+
+        private void MainForm_Load(object? sender, EventArgs e)
+        {
+            TopMost = true;
+            WindowState = FormWindowState.Minimized;
+            Show();
+            WindowState = FormWindowState.Normal;
+            Activate();
+            SetForegroundWindow(Handle);
         }
 
         private void PostponeButton_Click(object? sender, EventArgs e)
@@ -125,7 +143,7 @@ namespace C_Drive_Cleanup
 
         private void OkButton_Click(object? sender, EventArgs e)
         {
-            MessageBox.Show("The cleanup is starting now.", "Cleanup", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+            MessageBox.Show("The cleanup is starting after 'OK' is clicked.", "Cleanup", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             PerformCleanup();
 
             isConfirmed = true; // Set the flag to indicate the window is being closed due to an OK action
@@ -300,7 +318,7 @@ namespace C_Drive_Cleanup
                 {
                     countdownLabel.Text = "Time's up!";
                 });
-                MessageBox.Show("The cleanup is starting now.", "Cleanup", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                MessageBox.Show("The cleanup is starting after 'OK' is clicked.", "Cleanup", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                 PerformCleanup();
 
                 isConfirmed = true; // Set the flag to indicate the window is being closed due to an OK action
