@@ -256,17 +256,16 @@ namespace C_Drive_Cleanup
 
         private void PerformCleanup()
         {
-            //TODO Uncomment
-            // // Clean Downloads folder
-            // string downloadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-            // foreach (var directory in Directory.GetDirectories(downloadsPath))
-            // {
-            //     Directory.Delete(directory, true);
-            // }
-            // foreach (var file in Directory.GetFiles(downloadsPath))
-            // {
-            //     File.Delete(file);
-            // }
+            // Clean Downloads folder
+            string downloadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            foreach (var directory in Directory.GetDirectories(downloadsPath))
+            {
+                Directory.Delete(directory, true);
+            }
+            foreach (var file in Directory.GetFiles(downloadsPath))
+            {
+                File.Delete(file);
+            }
 
             // Clean current user's Recycle Bin using PowerShell
             var processStartInfo = new ProcessStartInfo
@@ -296,8 +295,7 @@ namespace C_Drive_Cleanup
 
         private void UpdateCountdown()
         {
-            //TODO Change to correct time addminutes
-            targetTime = DateTime.Now.AddSeconds(10); // Set the countdown target time to 10 minutes from now
+            targetTime = DateTime.Now.AddMinutes(10); // Set the countdown target time to 10 minutes from now
             countdownTimer.Start();
         }
 
