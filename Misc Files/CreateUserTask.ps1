@@ -23,7 +23,7 @@ else {
   <RegistrationInfo>
     <Date>$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ss')</Date>
     <Author>$DomainName\$UserName</Author>
-    <Description>Task for $UserName to clean Downloads and Recycle Bin on the first Monday of the month</Description>
+    <Description>Task for $UserName to clean Downloads and Recycle Bin on the $weekDay of Week $WeekofMonth of the month</Description>
   </RegistrationInfo>
   <Triggers>
     <CalendarTrigger>

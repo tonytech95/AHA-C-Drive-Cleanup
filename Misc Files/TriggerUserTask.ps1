@@ -21,10 +21,18 @@ $UserName = Get-LoggedOnUser
 
 if ($UserName) {
     $TaskName = "${UserName}_CleanUpTask"
-    # Trigger the scheduled task
-    Start-ScheduledTask -TaskName $TaskName
-    
-    Start-Sleep -Seconds 10
+
+    $task = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
+    if ($task) {
+        # Trigger the scheduled task
+        Start-ScheduledTask -TaskName $TaskName
+        Write-Output "Task '$taskName' has been triggered."
+
+        Start-Sleep -Seconds 10
+    } else {
+        Write-Output "Task '$taskName' not found."
+    }
+
 }
 else {
     Write-Output "No active user session found."
