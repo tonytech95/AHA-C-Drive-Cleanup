@@ -38,8 +38,8 @@ namespace C_Drive_Cleanup
 
         private void InitializeComponent()
         {
-            Text = "C Drive Clean Up";
-            Width = 300;
+            Text = "C Drive Clean Up (From Techordia)";
+            Width = 375;
             Height = 200;
             StartPosition = FormStartPosition.Manual;
             TopMost = true; // Make the window topmost
@@ -52,26 +52,33 @@ namespace C_Drive_Cleanup
                 Top = primaryScreen.WorkingArea.Height - Height - 30;
             }
 
-            messageLabel.Width = 280;
+            int margin = 10;
+            int labelWidth = Width - 2 * margin;
+
+            messageLabel.Width = labelWidth;
             messageLabel.Height = 80;
-            messageLabel.Top = 20;
-            messageLabel.Left = 10;
+            messageLabel.Top = 10;
+            // messageLabel.Left = margin;
             messageLabel.TextAlign = ContentAlignment.MiddleCenter;
+            messageLabel.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             Controls.Add(messageLabel);
 
-            countdownLabel.Width = 280;
+            countdownLabel.Width = labelWidth;
             countdownLabel.Height = 20;
             countdownLabel.Top = 100;
-            countdownLabel.Left = 10;
+            // countdownLabel.Left = margin;
             countdownLabel.TextAlign = ContentAlignment.MiddleCenter;
+            countdownLabel.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             Controls.Add(countdownLabel);
 
             Button postponeButton = new()
             {
                 Text = "Postpone",
                 Top = 130,
-                Left = 50
+                Width = 100,
+                Anchor = AnchorStyles.Bottom
             };
+            postponeButton.Left = (Width / 2) - postponeButton.Width - 10;
             postponeButton.Click += new EventHandler(PostponeButton_Click);
             Controls.Add(postponeButton);
 
@@ -79,8 +86,10 @@ namespace C_Drive_Cleanup
             {
                 Text = "OK",
                 Top = 130,
-                Left = 150
+                Width = 100,
+                Anchor = AnchorStyles.Bottom
             };
+            okButton.Left = (Width / 2) + 10;
             okButton.Click += new EventHandler(OkButton_Click);
             Controls.Add(okButton);
 
@@ -346,7 +355,7 @@ namespace C_Drive_Cleanup
 
         private void UpdateMessageLabel()
         {
-            messageLabel.Text = $"Your scheduled cleanup will start soon.\nClick 'Postpone' to delay by 1 hour or 'OK' to start now.\n\nPostpones left: {maxPostpone - postponeCount}";
+            messageLabel.Text = $"Cleanup for Downloads and Recycle Bin starts soon.\nClick 'Postpone' to delay by 1 hour or 'OK' to start now.\n\nPostpones left: {maxPostpone - postponeCount}";
         }
     }
 }
