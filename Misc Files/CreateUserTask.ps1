@@ -1,7 +1,7 @@
 # Variables for the task name, day, and time
 param (
-    [string]$WeekDay = "Monday", # Default to Monday
-    [string]$WeekofMonth = "1"   # Default to first week
+  [string]$WeekDay = "Monday", # Default to Monday
+  [string]$WeekofMonth = "1"   # Default to first week
 )
 
 $UserName = $env:USERNAME
@@ -12,12 +12,12 @@ $ExecutablePath = "C:\ProgramData\C Drive Cleanup\AHA C Drive Cleanup.exe" # Pat
 # Check if the task already exists
 $taskExists = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 
-if ($taskExists) {
-    Write-Output "Task $TaskName already exists. Skipping creation."
+if ($taskExists -and $taskExists.Description -match "Task for $UserName to clean Downloads and Recycle Bin on the $weekDay of Week $WeekofMonth of the month") {
+  Write-Output "Task $TaskName already exists. Skipping creation."
 }
 else {
-    # XML for the scheduled task
-    $TaskXml = @"
+  # XML for the scheduled task
+  $TaskXml = @"
 <?xml version="1.0" encoding="UTF-16"?>
 <Task version="1.3" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
   <RegistrationInfo>
@@ -93,9 +93,13 @@ else {
 </Task>
 "@
 
+  #Unregister the task first if it already exists
+  Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
+
+
   # Register the scheduled task using the XML content directly
   Register-ScheduledTask -TaskName $TaskName -Xml $TaskXml
 
   # Output a success message
-    Write-Output "Task $TaskName created successfully."
+  Write-Output "Task $TaskName created successfully."
 }
