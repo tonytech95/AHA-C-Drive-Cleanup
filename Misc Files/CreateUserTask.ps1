@@ -93,15 +93,9 @@ else {
 </Task>
 "@
 
-    # Save the XML to a temporary file
-    $TaskXmlPath = [System.IO.Path]::GetTempFileName()
-    Set-Content -Path $TaskXmlPath -Value $TaskXml
+  # Register the scheduled task using the XML content directly
+  Register-ScheduledTask -TaskName $TaskName -Xml $TaskXml
 
-    # Register the scheduled task using the XML file
-    schtasks /Create /TN $TaskName /XML $TaskXmlPath /F
-
-    # Remove the temporary XML file
-    Remove-Item -Path $TaskXmlPath
-
+  # Output a success message
     Write-Output "Task $TaskName created successfully."
 }
