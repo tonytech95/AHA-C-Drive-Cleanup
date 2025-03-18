@@ -27,7 +27,7 @@ else {
   </RegistrationInfo>
   <Triggers>
     <CalendarTrigger>
-      <StartBoundary>2024-01-01T03:00:00</StartBoundary>
+      <StartBoundary>2024-01-01T09:00:00</StartBoundary>
       <Enabled>true</Enabled>
       <ScheduleByMonthDayOfWeek>
         <Weeks>
