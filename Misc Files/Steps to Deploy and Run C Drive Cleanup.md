@@ -60,7 +60,7 @@
    - In the **Script Name** field, enter the path to the PowerShell script (e.g., `\\ahafile1\shares\Software\DoNotBackup\GPO-Linked Files\DoNotMove\C Drive Cleanup\Misc Files\createusertask.ps1`).
 
 3. **Configure the Script Parameters** (if needed):
-   - The script defaults to First Monday of month. If need to modify, enter `-WeekDay "Monday" -WeekofMonth "1"` (which translate to First Monday) in the **Script Parameters** field.
+   - The script defaults to First Monday of month at 9 AM. If need to modify, enter `-WeekDay "Monday" -WeekofMonth "1" -DesiredRunTime "9:00:00"` (which translate to First Monday at 9 AM) in the **Script Parameters** field. Just use the parameters needed.
 
 ### Step 4: Apply and Test the GPO
 

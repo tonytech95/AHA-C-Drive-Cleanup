@@ -1,7 +1,8 @@
 # Variables for the task name, day, and time
 param (
   [string]$WeekDay = "Monday", # Default to Monday
-  [string]$WeekofMonth = "1"   # Default to first week
+  [string]$WeekofMonth = "1",   # Default to first week
+  [string]$DesiredRunTime = "09:00:00" #Define the desired runtime (e.g., 08:00:00 for 8 AM)
 )
 
 $UserName = $env:USERNAME
@@ -13,11 +14,24 @@ $ExecutablePath = "C:\ProgramData\C Drive Cleanup\AHA C Drive Cleanup.exe" # Pat
 $taskExists = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 
 if ($taskExists -and $taskExists.Description -match "Task for $UserName to clean Downloads and Recycle Bin on the $weekDay of Week $WeekofMonth of the month") {
-  Write-Output "Task $TaskName already exists. Skipping creation."
-}
-else {
-  # XML for the scheduled task
-  $TaskXml = @"
+  # Get the next run time of the task
+  $taskInfo = Get-ScheduledTaskInfo -TaskName "${env:USERNAME}_CleanUpTask"
+  $nextRunTime = $taskInfo.NextRunTime
+
+  # Extract the time part from the next run time
+  $nextRunTimeTimeOnly = $nextRunTime.ToString("HH:mm:ss")
+
+  # Define the desired time (e.g., 08:00:00 for 8 AM)
+  # $desiredTime = "09:00:00"
+
+  # Compare the times
+  if ($nextRunTimeTimeOnly -eq $desiredRunTime) {
+  
+    Write-Output "Task $TaskName already exists. Skipping creation."
+  }
+  else {
+    # XML for the scheduled task
+    $TaskXml = @"
 <?xml version="1.0" encoding="UTF-16"?>
 <Task version="1.3" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
   <RegistrationInfo>
@@ -27,7 +41,7 @@ else {
   </RegistrationInfo>
   <Triggers>
     <CalendarTrigger>
-      <StartBoundary>2024-01-01T09:00:00</StartBoundary>
+      <StartBoundary>2024-01-01T$DesiredRunTIme</StartBoundary>
       <Enabled>true</Enabled>
       <ScheduleByMonthDayOfWeek>
         <Weeks>
@@ -93,13 +107,14 @@ else {
 </Task>
 "@
 
-  #Unregister the task first if it already exists
-  Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
+    #Unregister the task first if it already exists
+    Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
 
 
-  # Register the scheduled task using the XML content directly
-  Register-ScheduledTask -TaskName $TaskName -Xml $TaskXml
+    # Register the scheduled task using the XML content directly
+    Register-ScheduledTask -TaskName $TaskName -Xml $TaskXml
 
-  # Output a success message
-  Write-Output "Task $TaskName created successfully."
+    # Output a success message
+    Write-Output "Task $TaskName created successfully."
+  }
 }
